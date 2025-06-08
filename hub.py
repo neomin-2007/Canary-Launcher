@@ -7,13 +7,29 @@ from PyQt6.QtWidgets import (QMainWindow, QScrollArea, QWidget, QVBoxLayout,
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 from PyQt6.QtGui import QFont
 
+def format_data(tamanho_bytes: int) -> str:
+        if tamanho_bytes == 0:
+            return "0 bytes"
+        
+        unidades = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+        potencia = 0
+        
+        while tamanho_bytes >= 1024 and potencia < len(unidades) - 1:
+            tamanho_bytes /= 1024
+            potencia += 1
+        
+        if potencia == 0:
+            return f"{tamanho_bytes} {unidades[potencia]}"
+        else:
+            return f"{tamanho_bytes:.1f} {unidades[potencia]}"
+
 class GitHubFolderViewer(QMainWindow):
     item_clicked = pyqtSignal(str)  # Sinal emitido quando um item é clicado
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Modificações")
-        self.setMinimumSize(600, 400)
+        self.setMinimumSize(700, 400)
         
         # Widget central
         self.central_widget = QWidget()
@@ -75,7 +91,6 @@ class GitHubFolderViewer(QMainWindow):
         self.search_input.setPlaceholderText("Buscar itens...")
         self.search_input.textChanged.connect(self.filter_items)
         
-        search_layout.addWidget(QLabel("Buscar:"))
         search_layout.addWidget(self.search_input)
         self.main_layout.addLayout(search_layout)
 
@@ -126,7 +141,7 @@ class GitHubFolderViewer(QMainWindow):
             # Adiciona cada item à lista
             for item in items:
                 if item['type'] == 'file':  # Pode ajustar para incluir pastas também
-                    self.add_item(item['name'], item['download_url'], folder_name)
+                    self.add_item(item['name'], item['download_url'], folder_name, item['size'])
             
         except Exception as e:
             from PyQt6.QtWidgets import QMessageBox
@@ -139,7 +154,7 @@ class GitHubFolderViewer(QMainWindow):
         path = "/".join(parts[4:]) if "tree" in parts else "/".join(parts[2:])
         return f"https://api.github.com/repos/{user}/{repo}/contents/{path}"
 
-    def add_item(self, name, download_url, folder):
+    def add_item(self, name, download_url, folder, size):
         """Adiciona um item à lista"""
         item_frame = QFrame()
         item_frame.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -148,7 +163,7 @@ class GitHubFolderViewer(QMainWindow):
         layout.setContentsMargins(10, 5, 10, 5)
         
         # Nome do item
-        name_label = QLabel(name)
+        name_label = QLabel(name + " (" + format_data(size) + ")")
         name_label.setFont(QFont("Arial", 10))
         name_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         
@@ -163,7 +178,7 @@ class GitHubFolderViewer(QMainWindow):
         layout.addWidget(action_button)
         
         self.items_layout.addWidget(item_frame)
-
+    
     def filter_items(self, text):
         """Filtra os itens com base no texto da busca"""
         for i in range(self.items_layout.count()):
