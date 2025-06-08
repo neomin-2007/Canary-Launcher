@@ -3,6 +3,8 @@ from PyQt6.QtGui import QPixmap, QIcon, QFont
 from PyQt6.QtCore import Qt, QSize
 import launcher
 import updater
+import downloader
+import hub
 import os
 import sys
 
@@ -141,15 +143,25 @@ class MainWindow(QMainWindow):
         else:
             base_path = os.path.dirname(os.path.abspath(__file__))
             
-        discord_path = os.path.join(base_path, "assets/settings_icon.png")
+        options_path = os.path.join(base_path, "assets/settings_icon.png")
         
         options_button = QPushButton(self)
-        options_button.setIcon(QIcon(discord_path))
+        options_button.setIcon(QIcon(options_path))
         options_button.setIconSize(QSize(32, 32))
         options_button.setFixedSize(40, 40) 
         options_button.setStyleSheet("QPushButton { border: none; }")
         options_button.pressed.connect(self.execute_options)
         options_button.setGeometry((self.width() + 900) // 2, self.height() - 60, 40, 40)
+
+        modification_path = os.path.join(base_path, "assets/modification_icon.png")
+        
+        modification_button = QPushButton(self)
+        modification_button.setIcon(QIcon(modification_path))
+        modification_button.setIconSize(QSize(32, 32))
+        modification_button.setFixedSize(40, 40) 
+        modification_button.setStyleSheet("QPushButton { border: none; }")
+        modification_button.pressed.connect(self.execute_hub)
+        modification_button.setGeometry((self.width() + 800) // 2, self.height() - 60, 40, 40)
 
         discord_path = os.path.join(base_path, "assets/discord_icon.png")
         
@@ -177,6 +189,15 @@ class MainWindow(QMainWindow):
         self.close()
         ram_value = self.ram_slider.value() if hasattr(self, 'ram_slider') else None
         launcher.execute(nickname, ram_value)
+
+    def execute_hub(self):
+        self.viewer = hub.GitHubFolderViewer()
+        self.viewer.show()
+        
+        #self.viewer.item_clicked.connect(self.handle_item_clicked)
+        
+        #self.hub = downloader.Downloader(self)
+        #self.hub.downloading("https://github.com/neomin-2007/Canary-Launcher-Repository/blob/main/mods/OptiFine-1.8.9_HD_U_M5.jar")
     
     def execute_options(self):
 

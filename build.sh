@@ -1,14 +1,16 @@
 #!/bin/sh
 
 pyinstaller --onefile \
-    --add-data "assets/launcher.py:." \
-    --add-data "assets/background.png:." \
-    --add-data "assets/banner.png:." \
-    --add-data "assets/icon.ico:." \
-    --add-data "assets/icon.png:." \
-    --add-data "assets/settings_icon.png:." \
-    --add-data "assets/discord_icon.png:." \
-    --icon="icon.png" \
+    --add-data "updater.py:." \
+    --add-data "launcher.py:." \
+    --add-data "assets/background.png:assets" \
+    --add-data "assets/banner.png:assets" \
+    --add-data "assets/icon.ico:assets" \
+    --add-data "assets/icon.png:assets" \
+    --add-data "assets/modification_icon.png:assets" \
+    --add-data "assets/settings_icon.png:assets" \
+    --add-data "assets/discord_icon.png:assets" \
+    --icon="assets/icon.png" \
     --clean \
     --windowed \
     --name="CanaryClient" \

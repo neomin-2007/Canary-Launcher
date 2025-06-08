@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('launcher.py', '.'), ('background.png', '.'), ('banner.png', '.'), ('icon.ico', '.'), ('icon.png', '.'), ('settings_icon.png', '.'), ('discord_icon.png', '.')],
+    datas=[('updater.py', '.'), ('launcher.py', '.'), ('assets/background.png', 'assets'), ('assets/banner.png', 'assets'), ('assets/icon.ico', 'assets'), ('assets/icon.png', 'assets'), ('assets/modification_icon.png', 'assets'), ('assets/settings_icon.png', 'assets'), ('assets/discord_icon.png', 'assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon.png'],
+    icon=['assets/icon.png'],
 )
