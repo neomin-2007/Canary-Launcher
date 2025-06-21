@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QSlider, QBoxLayout, QHBoxLayout, QLineEdit, QApplication, QPushButton, QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QPixmap, QIcon, QFont
 from PyQt6.QtCore import Qt, QSize
+import psutil
 import launcher
 import updater
 import downloader
@@ -11,6 +12,9 @@ import sys
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        total_ram = psutil.virtual_memory().total // (1024 * 1024)  # Convertendo para MB
+        self.max_ram = int(total_ram * 1)  # Usar 75% da RAM total disponível
+        self.ram_value = min(1024, self.max_ram)  # Valor padrão de RAM (o menor entre 1024MB e o máximo disponível)
         self.setup_ui()
         
     def setup_ui(self):
@@ -35,7 +39,6 @@ class MainWindow(QMainWindow):
             self.updater.downloading()
     
     def setup_title(self):
-
         if getattr(sys, 'frozen', False):
             base_path = sys._MEIPASS
         else:
@@ -51,7 +54,6 @@ class MainWindow(QMainWindow):
         banner_button.setGeometry((self.width() - 200) // 2, self.height() - 700, 40, 40)
 
     def setup_background(self, layout):
-
         layout.addSpacing(40)
 
         if getattr(sys, 'frozen', False):
@@ -102,41 +104,40 @@ class MainWindow(QMainWindow):
             print(f"Aviso: Arquivo de ícone não encontrado em {icon_path}")
 
     def setup_buttons(self):
-        
         start_font = QFont()
         start_font.setBold(True)
         start_font.setPixelSize(24)
         
         start_button = QPushButton("INICIAR JOGO", self)
         start_button.setFont(start_font)
-        start_button.pressed.connect(self.execute_launcher)
+        start_button.clicked.connect(self.execute_launcher)
         start_button.setGeometry((self.width() - 250) // 2, self.height() - 80, 300, 55)
         
         start_button.setStyleSheet("""
-    QPushButton {
-        background-color: #3c8527;
-        color: white;
-        border-style: outset;
-        border-width: 2px;
-        border-radius: 10px;
-        border-color: #6a6a6a;
-        font-family: 'Minecraft', 'Arial', sans-serif;
-        font-size: 20px;
-        padding: 8px 16px;
-        min-width: 200px;
-        text-align: center;
-    }
-    QPushButton:hover {
-        background-color: #4a9e2d;
-        border-color: #7a7a7a;
-    }
-    QPushButton:pressed {
-        background-color: #2a6a1a;
-        border-style: inset;
-        padding-top: 9px;
-        padding-bottom: 7px;
-    }
-""")
+            QPushButton {
+                background-color: #3c8527;
+                color: white;
+                border-style: outset;
+                border-width: 2px;
+                border-radius: 10px;
+                border-color: #6a6a6a;
+                font-family: 'Minecraft', 'Arial', sans-serif;
+                font-size: 20px;
+                padding: 8px 16px;
+                min-width: 200px;
+                text-align: center;
+            }
+            QPushButton:hover {
+                background-color: #4a9e2d;
+                border-color: #7a7a7a;
+            }
+            QPushButton:pressed {
+                background-color: #2a6a1a;
+                border-style: inset;
+                padding-top: 9px;
+                padding-bottom: 7px;
+            }
+        """)
         
         if getattr(sys, 'frozen', False):
             base_path = sys._MEIPASS
@@ -150,7 +151,7 @@ class MainWindow(QMainWindow):
         options_button.setIconSize(QSize(32, 32))
         options_button.setFixedSize(40, 40) 
         options_button.setStyleSheet("QPushButton { border: none; }")
-        options_button.pressed.connect(self.execute_options)
+        options_button.clicked.connect(self.execute_options)
         options_button.setGeometry((self.width() + 900) // 2, self.height() - 60, 40, 40)
 
         modification_path = os.path.join(base_path, "assets/modification_icon.png")
@@ -160,7 +161,7 @@ class MainWindow(QMainWindow):
         modification_button.setIconSize(QSize(32, 32))
         modification_button.setFixedSize(40, 40) 
         modification_button.setStyleSheet("QPushButton { border: none; }")
-        modification_button.pressed.connect(self.execute_hub)
+        modification_button.clicked.connect(self.execute_hub)
         modification_button.setGeometry((self.width() + 800) // 2, self.height() - 60, 40, 40)
 
         discord_path = os.path.join(base_path, "assets/discord_icon.png")
@@ -170,7 +171,7 @@ class MainWindow(QMainWindow):
         discord_button.setIconSize(QSize(128, 128))
         discord_button.setFixedSize(64, 64) 
         discord_button.setStyleSheet("QPushButton { border: none; }")
-        discord_button.pressed.connect(self.execute_options)
+        discord_button.clicked.connect(self.execute_options)
         discord_button.setGeometry((self.width() + 875) // 2, self.height() - 550, 40, 40)
     
     def execute_launcher(self):
@@ -187,20 +188,13 @@ class MainWindow(QMainWindow):
             return
 
         self.close()
-        ram_value = self.ram_slider.value() if hasattr(self, 'ram_slider') else None
-        launcher.execute(nickname, ram_value)
+        launcher.execute(nickname, self.ram_value)
 
     def execute_hub(self):
         self.viewer = hub.GitHubFolderViewer()
         self.viewer.show()
-        
-        #self.viewer.item_clicked.connect(self.handle_item_clicked)
-        
-        #self.hub = downloader.Downloader(self)
-        #self.hub.downloading("https://github.com/neomin-2007/Canary-Launcher-Repository/blob/main/mods/OptiFine-1.8.9_HD_U_M5.jar")
     
     def execute_options(self):
-
         self.options_window = QWidget()
         self.options_window.setWindowTitle("Opções")
         self.options_window.setFixedSize(400, 150)
@@ -223,7 +217,7 @@ class MainWindow(QMainWindow):
         ram_layout = QVBoxLayout()
         
         value_layout = QHBoxLayout()
-        self.ram_value_label = QLabel("1024 MB")
+        self.ram_value_label = QLabel(f"{self.ram_value} MB")
         self.ram_value_label.setStyleSheet("""
             font-size: 16px;
             font-weight: bold;
@@ -236,8 +230,10 @@ class MainWindow(QMainWindow):
         ram_layout.addLayout(value_layout)
         
         self.ram_slider = QSlider(Qt.Orientation.Horizontal)
-        self.ram_slider.setRange(512, 4096)
-        self.ram_slider.setValue(1024)
+        self.ram_slider.setRange(512, self.max_ram)
+        self.ram_slider.setValue(self.ram_value)
+        self.ram_slider.setSingleStep(128)  # Incremento de 128MB
+        self.ram_slider.setPageStep(512)    # Incremento maior de 512MB
         self.ram_slider.setTickInterval(512)
         self.ram_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
         self.ram_slider.setStyleSheet("""
@@ -258,15 +254,13 @@ class MainWindow(QMainWindow):
             }
         """)
         
-        self.ram_slider.valueChanged.connect(
-            lambda value: self.ram_value_label.setText(f"{value} MB")
-        )
+        self.ram_slider.valueChanged.connect(self.update_ram_value)
         ram_layout.addWidget(self.ram_slider)
         
         min_max_layout = QHBoxLayout()
         min_label = QLabel("512 MB")
         min_label.setStyleSheet("color: #666;")
-        max_label = QLabel("4096 MB")
+        max_label = QLabel(f"{self.max_ram} MB")
         max_label.setStyleSheet("color: #666;")
         
         min_max_layout.addWidget(min_label)
@@ -280,6 +274,13 @@ class MainWindow(QMainWindow):
         self.options_window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         
         self.options_window.show()
+    
+    def update_ram_value(self, value):
+        # Arredonda para o múltiplo de 128 mais próximo
+        rounded_value = (value // 128) * 128
+        self.ram_slider.setValue(rounded_value)
+        self.ram_value = rounded_value
+        self.ram_value_label.setText(f"{rounded_value} MB")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -294,4 +295,4 @@ if __name__ == "__main__":
         app.setWindowIcon(QIcon(icon_path))
 
     window = MainWindow()
-    app.exec()
+    sys.exit(app.exec())
