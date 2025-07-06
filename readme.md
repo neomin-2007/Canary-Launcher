@@ -15,6 +15,8 @@ O launcher conta com um repositório on-line aonde os usuários podem pedir para
 # COMUNIDADE
 O launcher é feito para comunidade do Rede Canary, um servidor de Sky Block em desenvolvimento, o launcher não é exclusivo nosso, mas é feito sob medida para funcionar em nossos moldes, para obter suporte basta aceder ao nosso Discord.
 
+Nosso Discord: https://discord.gg/r9kDa6SEqP
+
 # DEMONSTRAÇÃO
 
 | ![1](https://imgur.com/qBUogJv.png) | ![2](https://imgur.com/ZSpRnlW.png) |
