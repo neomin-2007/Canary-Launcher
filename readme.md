@@ -11,10 +11,11 @@ Canary Launcher é um launcher de Minecraft para jogadores não originais. Ele p
 | ✅ Forge 1.8.9  | Suportado   | ✅ Forge 1.8.9      | Suportado   |
 | 🚧 Canary Client | Planejado   | 🚧 Canary Client    | Planejado   |
 
-| Versão         | Status      |
-|----------------|-------------|
-| ✅ Forge 1.8.9    | Suportado   |
-| 🚧 Canary Client  | Planejado   |
+
+| Versão          | Status      | Status |
+|-----------------|-------------|---------------------|
+| ✅ Linux x86-64  | ✅ Forge 1.8.9 / 🚧 Canary Client   | ✅ Ativo     |
+| 🚧 Windows 10    | ✅ Forge 1.8.9 / 🚧 Canary Client   | 🚧 Inativo |
 
 ---
 
