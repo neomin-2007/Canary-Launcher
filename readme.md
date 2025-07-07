@@ -9,6 +9,17 @@ O seu novo launcher de Minecraft para jogadores não originais. O objetivo do la
 | Forge 1.8.9   | ✅ Suportado |
 | Canary Client | 🚧 Planejado |
 
+# INSTALAÇÃO
+Para instalar o Canary Launcher, primeiro precisamos identificar qual o seu sistema operacional, temos instalador automático para distribuições Linux com arquitetura de 64 bits que são comumente usadas em processadores Intel e AMD de computadores de mesa e notebooks e no caso do Windows apenas baixar o executável é suficiente.
+
+## LINUX
+> Obtenha no releases o arquivo ``canary-client-linux-x64-installer.sh``.
+> A instalação é totalmente automatizada, você pode excluir o script após a instalação terminar.
+```
+  digite chmod +x canary-client-linux-x64-installer.sh
+  digite sudo canary-client-linux-x64-installer.sh
+```
+
 # REPOSITÓRIO ON-LINE
 O launcher conta com um repositório on-line aonde os usuários podem pedir para que suas modificações, pacotes de recurso, shaders sejam adicionados, também podem instalar pelo próprio launcher rapidamente e tê-los automaticamente instalados.
 
