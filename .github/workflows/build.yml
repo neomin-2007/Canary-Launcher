@@ -22,12 +22,7 @@ jobs:
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
 
     - name: Build with PyInstaller
-      run: |
-        pyinstaller --onefile --name CanaryClient main.py `
-          --hidden-import PyQt6.QtGui `
-          --hidden-import PyQt6.QtWidgets `
-          --hidden-import PyQt6.QtCore `
-          --add-data "${{ env.pythonLocation }}\Lib\site-packages\PyQt6\Qt6\plugins;PyQt6\Qt6\plugins"
+      run: pyinstaller CanaryClient.spec
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
