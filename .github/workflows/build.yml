@@ -1,154 +1,39 @@
-name: Build CanaryClient
-
-on:
-  push:
-    tags:
-      - 'v*'
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch: # Permite acionar manualmente
-
-jobs:
-  build-windows:
-    runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: .  # Ajuste se necessário
+build-windows:
+  runs-on: windows-latest
+  defaults:
+    run:
+      shell: pwsh # Usa PowerShell explicitamente
+      working-directory: .
+  
+  steps:
+  - name: Checkout código
+    uses: actions/checkout@v4
     
-    steps:
-    - name: Checkout código
-      uses: actions/checkout@v4
-      
-    - name: Configurar Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Instalar dependências
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller
-        if exist requirements.txt pip install -r requirements.txt
-    
-    - name: Verificar estrutura de arquivos
-      run: |
-        dir assets /s
-        dir *.py
-    
-    - name: Build do executável Windows
-      run: |
-        pyinstaller --onefile `
-          --add-data "updater.py:." `
-          --add-data "launcher.py:." `
-          --add-data "assets/background.png:assets" `
-          --add-data "assets/banner.png:assets" `
-          --add-data "assets/icon.ico:assets" `
-          --add-data "assets/icon.png:assets" `
-          --add-data "assets/modification_icon.png:assets" `
-          --add-data "assets/settings_icon.png:assets" `
-          --add-data "assets/discord_icon.png:assets" `
-          --icon="assets/icon.png" `
-          --clean `
-          --windowed `
-          --name="CanaryClient" `
-          main.py
-      
-    - name: Listar arquivos gerados
-      run: |
-        dir dist\ /s
-      
-    - name: Upload do artefato Windows
-      uses: actions/upload-artifact@v4
-      with:
-        name: CanaryClient-Windows
-        path: dist/CanaryClient.exe
-        if-no-files-found: error
-
-  build-linux:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .  # Ajuste se necessário
-    
-    steps:
-    - name: Checkout código
-      uses: actions/checkout@v4
-      
-    - name: Configurar Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Instalar dependências
-      run: |
-        pip install --upgrade pip
-        pip install pyinstaller
-        if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-    
-    - name: Verificar estrutura de arquivos
-      run: |
-        find . -name "*.py" -type f
-        ls -la assets/
-    
-    - name: Build do executável Linux
-      run: |
-        pyinstaller --onefile \
-          --add-data "updater.py:." \
-          --add-data "launcher.py:." \
-          --add-data "assets/background.png:assets" \
-          --add-data "assets/banner.png:assets" \
-          --add-data "assets/icon.ico:assets" \
-          --add-data "assets/icon.png:assets" \
-          --add-data "assets/modification_icon.png:assets" \
-          --add-data "assets/settings_icon.png:assets" \
-          --add-data "assets/discord_icon.png:assets" \
-          --icon="assets/icon.png" \
-          --clean \
-          --windowed \
-          --name="CanaryClient" \
-          main.py
-      
-    - name: Dar permissões de execução
-      run: chmod +x dist/CanaryClient
-      
-    - name: Upload do artefato Linux
-      uses: actions/upload-artifact@v4
-      with:
-        name: CanaryClient-Linux
-        path: dist/CanaryClient
-        if-no-files-found: error
-
-  create-release:
-    needs: [build-windows, build-linux]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    
-    steps:
-    - name: Download artefatos Windows
-      uses: actions/download-artifact@v4
-      with:
-        name: CanaryClient-Windows
-        path: ./artifacts/windows
-        
-    - name: Download artefatos Linux
-      uses: actions/download-artifact@v4
-      with:
-        name: CanaryClient-Linux
-        path: ./artifacts/linux
-        
-    - name: Criar Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ./artifacts/windows/CanaryClient.exe
-          ./artifacts/linux/CanaryClient
-        tag_name: ${{ github.ref_name }}
-        name: Release ${{ github.ref_name }}
-        body: |
-          CanaryClient ${{ github.ref_name }}
-          
-          **Instruções:**
-          - Windows: Execute `CanaryClient.exe`
-          - Linux: Execute `chmod +x CanaryClient && ./CanaryClient`
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  - name: Configurar Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: '3.11'
+  
+  - name: Instalar dependências
+    run: |
+      python -m pip install --upgrade pip
+      pip install pyinstaller
+      if (Test-Path "requirements.txt") { pip install -r requirements.txt }
+  
+  - name: Build do executável Windows
+    run: |
+      pyinstaller --onefile `
+        --add-data "updater.py:." `
+        --add-data "launcher.py:." `
+        --add-data "assets/background.png:assets" `
+        --add-data "assets/banner.png:assets" `
+        --add-data "assets/icon.ico:assets" `
+        --add-data "assets/icon.png:assets" `
+        --add-data "assets/modification_icon.png:assets" `
+        --add-data "assets/settings_icon.png:assets" `
+        --add-data "assets/discord_icon.png:assets" `
+        --icon="assets/icon.png" `
+        --clean `
+        --windowed `
+        --name="CanaryClient" `
+        main.py
