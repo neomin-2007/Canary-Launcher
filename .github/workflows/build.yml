@@ -23,7 +23,12 @@ jobs:
     
     - name: Build with PyInstaller
       run: |
-        pyinstaller --onefile --name CanaryClient main.py
+        pyinstaller --onefile --name CanaryClient main.py ^
+        --hidden-import PyQt6.QtGui ^
+        --hidden-import PyQt6.QtWidgets ^
+        --hidden-import PyQt6.QtCore ^
+        --add-data "C:\path\to\Lib\site-packages\PyQt6\Qt6\plugins;PyQt6\Qt6\plugins"
+
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
